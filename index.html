@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.ag alpnach | Tradition trifft Präzision</title>
+    
+    <!-- Google Fonts: Poppins (Headlines) & Open Sans (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS RESET & ROOT VARIABLES --- */
+        :root {
+            --primary-red: #C10000;
+            --primary-red-glow: rgba(193, 0, 0, 0.7);
+            --primary-charcoal: #1a1a1a;
+            --secondary-dark: #222222;
+            --light-grey: #F5F5F5;
+            --medium-grey: #888;
+            --white: #FFFFFF;
+            --font-headline: 'Poppins', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--primary-charcoal);
+            color: var(--light-grey);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* --- CURSOR TRAIL EFFECT --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out, opacity 0.2s ease-out;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-red);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(193, 0, 0, 0.3);
+            transition: transform 0.15s ease-out, opacity 0.3s ease-out;
+        }
+
+        body:hover .cursor-dot, body:hover .cursor-outline {
+            opacity: 1;
+        }
+
+        .cursor-outline.hover {
+            transform: translate(-50%, -50%) scale(1.5);
+            background-color: rgba(193, 0, 0, 0.5);
+        }
+        
+        /* --- GENERAL STYLES & LAYOUT --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-headline);
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.2;
+        }
+        
+        h1 { font-size: 3.5rem; }
+        h2 { font-size: 2.5rem; }
+        h3 { font-size: 1.5rem; }
+
+        section {
+            padding: 8rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .section-title h2 {
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-red);
+            box-shadow: 0 0 15px var(--primary-red-glow);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background-color: var(--primary-red);
+            color: var(--white);
+            text-decoration: none;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-red);
+            box-shadow: 0 0 20px var(--primary-red-glow);
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            color: var(--primary-red);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border-color: var(--medium-grey);
+            color: var(--white);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--medium-grey);
+            color: var(--primary-charcoal);
+        }
+
+        /* --- SCROLL ANIMATION --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 0;
+            z-index: 1000;
+            background-color: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .main-header.scrolled {
+            padding: 1rem 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+        .logo span {
+            color: var(--primary-red);
+            text-shadow: 0 0 10px var(--primary-red-glow);
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .main-nav ul li {
+            margin-left: 2rem;
+        }
+
+        .main-nav ul li a {
+            color: var(--light-grey);
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+        
+        .main-nav ul li a:hover {
+            color: var(--primary-red);
+        }
+
+        .main-nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-red);
+            transition: width 0.3s ease;
+        }
+
+        .main-nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .hamburger .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: var(--white);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* --- HERO SECTION --- */
+        #hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            background: linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.9)), url('https://images.pexels.com/photos/1216589/pexels-photo-1216589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
+        }
+
+        #hero::after { /* Angular overlay effect */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to top, var(--primary-charcoal), transparent);
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5rem;
+            text-shadow: 0 0 30px rgba(0,0,0,0.7);
+            margin-bottom: 1rem;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.8rem;
+            font-family: var(--font-headline);
+            color: var(--primary-red);
+            text-shadow: 0 0 15px var(--primary-red-glow);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-buttons .btn {
+            margin: 0 0.5rem;
+        }
+        
+        /* --- ABOUT / USP SECTION --- */
+        #about {
+            background-color: var(--secondary-dark);
+            clip-path: polygon(0 0, 100% 5%, 100% 100%, 0 95%);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 5px;
+            filter: grayscale(30%);
+            border-left: 5px solid var(--primary-red);
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .about-text h3 {
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+        }
+
+        .usp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 5rem;
+            text-align: center;
+        }
+        .usp-item {
+            padding: 2rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .usp-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 25px rgba(193, 0, 0, 0.3);
+            border-color: var(--primary-red);
+        }
+        .usp-item .icon {
+            font-size: 3rem;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px var(--primary-red-glow);
+        }
+
+        /* --- SERVICES SECTION --- */
+        #services {
+            background-color: var(--primary-charcoal);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--secondary-dark);
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-bottom-color: var(--primary-red);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(193,0,0,0.1), transparent 40%);
+            transform-origin: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .service-card:hover::before {
+            opacity: 1;
+            animation: rotate 8s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .service-card .icon {
+            font-size: 3.5rem;
+            color: var(--primary-red);
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- PROJECTS SECTION --- */
+        #projects {
+            background-color: var(--secondary-dark);
+            clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .project-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .project-item img {
+            width: 100%;
+            height: 280px;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .project-item:hover img {
+            transform: scale(1.1);
+        }
+        .project-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: white;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.4s ease-in-out;
+        }
+        .project-item:hover .project-overlay {
+            transform: translateY(0);
+        }
+        .project-overlay h4 {
+            font-family: var(--font-headline);
+            margin-bottom: 0.25rem;
+        }
+        .project-overlay p {
+            font-size: 0.9rem;
+            color: var(--light-grey);
+        }
+
+        /* --- CAREERS SECTION --- */
+        .careers-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .careers-content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* --- CONTACT SECTION --- */
+        #contact {
+            background-color: var(--secondary-dark);
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+        }
+        .contact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+        .contact-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-charcoal);
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: var(--white);
+            font-family: var(--font-body);
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 10px var(--primary-red-glow);
+        }
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .contact-info-item .icon {
+            font-size: 1.5rem;
+            color: var(--primary-red);
+            margin-right: 1rem;
+            width: 30px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--primary-charcoal);
+            padding: 4rem 0 2rem;
+            text-align: center;
+        }
+        .footer-socials a {
+            color: var(--medium-grey);
+            font-size: 1.5rem;
+            margin: 0 1rem;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .footer-socials a:hover {
+            color: var(--primary-red);
+            text-shadow: 0 0 10px var(--primary-red-glow);
+        }
+        .footer-copyright {
+            margin-top: 2rem;
+            color: var(--medium-grey);
+            font-size: 0.9rem;
+        }
+        .footer-copyright .logo-footer {
+            font-family: var(--font-headline);
+            color: var(--white);
+        }
+        .footer-copyright .logo-footer span {
+            color: var(--primary-red);
+        }
+
+
+        /* --- RESPONSIVE STYLES --- */
+        @media (max-width: 992px) {
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2rem; }
+            .hero-content h1 { font-size: 3.5rem; }
+            
+            .about-content { grid-template-columns: 1fr; }
+            .about-image { height: 400px; }
+            .usp-grid { grid-template-columns: 1fr; }
+            .projects-grid { grid-template-columns: 1fr 1fr; }
+            .contact-wrapper { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            /* Mobile Navigation */
+            .main-nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: var(--primary-charcoal);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transform: translateX(100%);
+                transition: transform 0.4s ease-in-out;
+            }
+            .main-nav.active {
+                transform: translateX(0);
+            }
+            .main-nav ul {
+                flex-direction: column;
+                text-align: center;
+            }
+            .main-nav ul li {
+                margin: 1.5rem 0;
+            }
+            .main-nav ul li a {
+                font-size: 1.5rem;
+            }
+            .hamburger {
+                display: block;
+            }
+            .hamburger.active .bar:nth-child(2) { opacity: 0; }
+            .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+            .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+            section { padding: 6rem 0; }
+            .hero-content h1 { font-size: 2.8rem; }
+            .hero-content .subtitle { font-size: 1.3rem; }
+            #about, #projects, #contact { clip-path: none; }
+            .projects-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-outline"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- Header -->
+    <header class="main-header" id="main-header">
+        <div class="container">
+            <a href="#hero" class="logo">.ag<span>alpnach</span></a>
+            <nav class="main-nav" id="main-nav">
+                <ul>
+                    <li><a href="#hero">Startseite</a></li>
+                    <li><a href="#about">Über Uns</a></li>
+                    <li><a href="#services">Dienstleistungen</a></li>
+                    <li><a href="#projects">Referenzen</a></li>
+                    <li><a href="#careers">Karriere</a></li>
+                    <li><a href="#contact">Kontakt</a></li>
+                </ul>
+            </nav>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero">
+            <div class="hero-content reveal">
+                <h1>Bauen mit Vertrauen.<br>Seit 1929.</h1>
+                <p class="subtitle">Tradition trifft Präzision</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn">Unsere Projekte entdecken</a>
+                    <a href="#contact" class="btn btn-secondary">Kontakt aufnehmen</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About / USP Section -->
+        <section id="about">
+            <div class="container">
+                <div class="about-content">
+                    <div class="reveal">
+                        <img src="https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Team bei der Arbeit" class="about-image">
+                    </div>
+                    <div class="about-text reveal">
+                        <h3>Über 90 Jahre Bauerfahrung</h3>
+                        <h2>Ein Fundament, das Generationen überdauert.</h2>
+                        <p>Seit unserer Gründung im Jahr 1929 steht die Bau AG Alpnach für höchste Qualität, Zuverlässigkeit und eine tiefe Verbundenheit mit der Region. Als Generalunternehmung realisieren wir Bauvorhaben jeder Grösse – vom Fundament bis zum Dach. Unser Erbe ist Ihr Vertrauen.</p>
+                    </div>
+                </div>
+                <div class="usp-grid">
+                    <div class="usp-item reveal">
+                        <div class="icon"><i class="fas fa-award"></i></div>
+                        <h3>Erfahrung</h3>
+                        <p>Über 90 Jahre Handwerkstradition und gewachsenes Know-how.</p>
+                    </div>
+                    <div class="usp-item reveal" style="transition-delay: 0.2s;">
+                        <div class="icon"><i class="fas fa-gem"></i></div>
+                        <h3>Qualität</h3>
+                        <p>Präzision und Zuverlässigkeit aus der Region für die Region.</p>
+                    </div>
+                    <div class="usp-item reveal" style="transition-delay: 0.4s;">
+                        <div class="icon"><i class="fas fa-handshake"></i></div>
+                        <h3>Partnerschaft</h3>
+                        <p>Ein Ansprechpartner für Ihr gesamtes Bauvorhaben.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services">
+            <div class="container">
+                <div class="section-title reveal">
+                    <h2>Unsere Dienstleistungen</h2>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card reveal">
+                        <div class="icon"><i class="fas fa-building"></i></div>
+                        <h3>Hochbau</h3>
+                        <p>Wir errichten Wohn-, Gewerbe- und Industriebauten mit höchstem Anspruch an Qualität und Architektur.</p>
+                    </div>
+                    <div class="service-card reveal" style="transition-delay: 0.2s;">
+                        <div class="icon"><i class="fas fa-road"></i></div>
+                        <h3>Tiefbau</h3>
+                        <p>Von Erschliessungen bis zu komplexen Infrastrukturprojekten – wir schaffen die Basis für die Zukunft.</p>
+                    </div>
+                    <div class="service-card reveal" style="transition-delay: 0.4s;">
+                        <div class="icon"><i class="fas fa-hammer"></i></div>
+                        <h3>Umbau & Renovation</h3>
+                        <p>Wir modernisieren und sanieren mit Respekt vor der Bausubstanz und einem Blick für modernes Wohnen.</p>
+                    </div>
+                    <div class="service-card reveal" style="transition-delay: 0.6s;">
+                        <div class="icon"><i class="fas fa-users"></i></div>
+                        <h3>Kundenarbeiten</h3>
+                        <p>Kein Auftrag ist zu klein. Wir führen kleinere Maurer- und Reparaturarbeiten zuverlässig aus.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects">
+            <div class="container">
+                <div class="section-title reveal">
+                    <h2>Referenzen</h2>
+                </div>
+                <div class="projects-grid">
+                    <div class="project-item reveal">
+                        <img src="https://images.pexels.com/photos/209315/pexels-photo-209315.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modernes Einfamilienhaus">
+                        <div class="project-overlay">
+                            <h4>Neubau EFH, Alpnach</h4>
+                            <p>Hochbau</p>
+                        </div>
+                    </div>
+                    <div class="project-item reveal" style="transition-delay: 0.2s;">
+                        <img src="https://images.pexels.com/photos/1109354/pexels-photo-1109354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Sanierter Altbau">
+                        <div class="project-overlay">
+                            <h4>Kernsanierung Wohnhaus, Sarnen</h4>
+                            <p>Umbau & Renovation</p>
+                        </div>
+                    </div>
+                    <div class="project-item reveal" style="transition-delay: 0.4s;">
+                        <img src="https://images.pexels.com/photos/2724748/pexels-photo-2724748.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modernes Badezimmer">
+                        <div class="project-overlay">
+                            <h4>Badumbau, Stans</h4>
+                            <p>Kundenarbeiten</p>
+                        </div>
+                    </div>
+                    <div class="project-item reveal">
+                        <img src="https://images.pexels.com/photos/808941/pexels-photo-808941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Strassenbau">
+                        <div class="project-overlay">
+                            <h4>Erschliessungsstrasse, Giswil</h4>
+                            <p>Tiefbau</p>
+                        </div>
+                    </div>
+                    <div class="project-item reveal" style="transition-delay: 0.2s;">
+                        <img src="https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Gewerbehalle">
+                        <div class="project-overlay">
+                            <h4>Industriehalle Neubau, Kägiswil</h4>
+                            <p>Hochbau</p>
+                        </div>
+                    </div>
+                    <div class="project-item reveal" style="transition-delay: 0.4s;">
+                        <img src="https://images.pexels.com/photos/210647/pexels-photo-210647.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Mehrfamilienhaus">
+                        <div class="project-overlay">
+                            <h4>Wohnüberbauung, Sachseln</h4>
+                            <p>Generalunternehmung</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Careers Section -->
+        <section id="careers">
+            <div class="container careers-content reveal">
+                <div class="section-title">
+                    <h2>Werden Sie Teil unseres Teams</h2>
+                </div>
+                <p>Wir sind stets auf der Suche nach qualifizierten und motivierten Fachkräften, die unsere Leidenschaft für das Bauen teilen. Entdecken Sie unsere offenen Stellen und gestalten Sie mit uns die Zukunft.</p>
+                <a href="#contact" class="btn">Offene Stellen ansehen</a>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="container">
+                <div class="section-title reveal">
+                    <h2>Kontaktieren Sie uns</h2>
+                </div>
+                <div class="contact-wrapper">
+                    <div class="contact-info reveal">
+                        <h3>Lassen Sie uns Ihr Projekt besprechen.</h3>
+                        <p>Haben Sie Fragen oder möchten Sie ein konkretes Bauvorhaben planen? Zögern Sie nicht, uns zu kontaktieren. Wir freuen uns darauf, von Ihnen zu hören.</p>
+                        <div class="contact-info-item">
+                            <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <span>Musterstrasse 123, 6055 Alpnach Dorf</span>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="icon"><i class="fas fa-phone"></i></div>
+                            <span>+41 41 123 45 67</span>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="icon"><i class="fas fa-envelope"></i></div>
+                            <span>info@bau-ag-alpnach.ch</span>
+                        </div>
+                    </div>
+                    <form class="contact-form reveal" style="transition-delay: 0.2s;">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Ihr Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Ihre E-Mail" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" rows="6" placeholder="Ihre Nachricht" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Nachricht senden</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-socials reveal">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="footer-copyright reveal">
+                <p>&copy; <span id="year"></span> <span class="logo-footer">.ag<span>alpnach</span></span>. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- CURSOR TRAIL EFFECT ---
+            const cursorDot = document.querySelector(".cursor-dot");
+            const cursorOutline = document.querySelector(".cursor-outline");
+            const hoverables = document.querySelectorAll('a, button, .project-item, .usp-item');
+
+            window.addEventListener("mousemove", function (e) {
+                const posX = e.clientX;
+                const posY = e.clientY;
+
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+
+                cursorOutline.style.left = `${posX}px`;
+                cursorOutline.style.top = `${posY}px`;
+
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
+            });
+
+            hoverables.forEach(el => {
+                el.addEventListener('mouseover', () => cursorOutline.classList.add('hover'));
+                el.addEventListener('mouseout', () => cursorOutline.classList.remove('hover'));
+            });
+
+
+            // --- STICKY HEADER ---
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+
+            // --- MOBILE NAVIGATION (HAMBURGER) ---
+            const hamburger = document.getElementById('hamburger');
+            const nav = document.getElementById('main-nav');
+            const navLinks = nav.querySelectorAll('a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                nav.classList.toggle('active');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    nav.classList.remove('active');
+                });
+            });
+
+
+            // --- SCROLL REVEAL ANIMATION ---
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            revealElements.forEach(el => observer.observe(el));
+            
+
+            // --- SMOOTH SCROLL FOR NAV LINKS ---
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+
+            // --- DYNAMIC YEAR IN FOOTER ---
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
